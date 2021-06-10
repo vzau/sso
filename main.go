@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ZDV-Web-Team/sso/lib/database/models"
 	"github.com/common-nighthawk/go-figure"
 	"github.com/dhawton/log4g"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"gitlab.com/kzdv/sso/database/models"
 )
 
 var log = log4g.Category("main")
