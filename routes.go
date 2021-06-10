@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	v1 "github.com/ZDV-Web-Team/sso/controllers/v1"
 	"github.com/gin-gonic/gin"
+	v1 "gitlab.com/kzdv/sso/controllers/v1"
 )
 
 func SetupRoutes(engine *gin.Engine) {
