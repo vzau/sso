@@ -45,9 +45,6 @@ func main() {
 	log.Info("Connecting to database and handling migrations")
 	models.Connect(Getenv("DB_USERNAME", "root"), Getenv("DB_PASSWORD", "secret"), Getenv("DB_HOSTNAME", "localhost"), Getenv("DB_PORT", "3306"), Getenv("DB_DATABASE", "zdv"))
 
-	log.Info("Setting up bluemonday policy")
-	CreatePolicy()
-
 	log.Info("Configuring Gin Server")
 	server := NewServer(appenv)
 
