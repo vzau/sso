@@ -69,6 +69,12 @@ func GetAuthorize(c *gin.Context) {
 		Scope:               req.Scope,
 	}
 
+	if err = models.DB.Create(&login).Error; err != nil {
+		log4g.Category("controllers/authorize").Error("Failed to store token " + err.Error())
+		handleError(c, "Failed to create token")
+		return
+	}
+
 	/*	Leave this here, hopefully ULSv3 lets us send the return url instead of an ID #
 
 		scheme := "http"
