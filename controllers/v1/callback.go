@@ -129,6 +129,7 @@ func GetCallback(c *gin.Context) {
 		return
 	}
 
+	login.CID = user.CID
 	login.Code, _ = gonanoid.New(32)
 
 	c.Redirect(302, fmt.Sprintf("%s?code=%s&state=%s", login.RedirectURI, login.Code, login.State))

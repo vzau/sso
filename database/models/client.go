@@ -10,6 +10,7 @@ import (
 
 type OAuthClient struct {
 	ID           uint   `json:"id" gorm:"primaryKey"`
+	Name         string `json:"name" gorm:"primaryKey"`
 	ClientId     string `json:"client_id" gorm:"type:varchar(128)"`
 	ClientSecret string `json:"-" gorm:"type:varchar(255)"`
 	RedirectURIs string `json:"return_uris" gorm:"type:text"`

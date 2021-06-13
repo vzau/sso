@@ -3,9 +3,16 @@ package v1
 import (
 	"crypto/sha256"
 	"encoding/base64"
+	"fmt"
 	"net/http"
+	"os"
+	"time"
 
+	"github.com/dhawton/log4g"
 	"github.com/gin-gonic/gin"
+	"github.com/lestrrat-go/jwx/jwa"
+	"github.com/lestrrat-go/jwx/jwk"
+	"github.com/lestrrat-go/jwx/jwt"
 	"gitlab.com/kzdv/sso/database/models"
 )
 
@@ -19,12 +26,11 @@ type TokenRequest struct {
 }
 
 type TokenResponse struct {
-	AccessToken         string   `json:"access_token"`
-	ExpiresIn           int      `json:"expires_in"`
-	Scope               []string `json:"scope"`
-	TokenType           string   `json:"token_type"`
-	CodeChallenge       string   `json:"code_challenge"`
-	CodeChallengeMethod string   `json:"code_challenge_method"`
+	AccessToken         string `json:"access_token"`
+	ExpiresIn           int    `json:"expires_in"`
+	TokenType           string `json:"token_type"`
+	CodeChallenge       string `json:"code_challenge"`
+	CodeChallengeMethod string `json:"code_challenge_method"`
 }
 
 func PostToken(c *gin.Context) {
@@ -57,4 +63,30 @@ func PostToken(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid_grant"})
 		return
 	}
+
+	keyset, err := jwk.Parse([]byte(os.Getenv("ZDK_JWKS")))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		log4g.Category("controller/token").Error("Could not parse JWKs: " + err.Error())
+		return
+	}
+
+	key, _ := keyset.LookupKeyID(os.Getenv("ZDV_CURRENT_KEY"))
+	token := jwt.New()
+	token.Set(jwt.IssuerKey, "sso.kzdv.io")
+	token.Set(jwt.AudienceKey, login.Client.Name)
+	token.Set(jwt.SubjectKey, fmt.Sprint(login.CID))
+	token.Set(jwt.IssuedAtKey, time.Now())
+	token.Set(jwt.ExpirationKey, (time.Hour*24*7)/time.Second)
+	signed, err := jwt.Sign(token, jwa.SignatureAlgorithm(key.KeyType()), key)
+
+	ret := TokenResponse{
+		AccessToken:         string(signed),
+		ExpiresIn:           int(time.Now().Add(time.Hour * 24 * 7).Unix()),
+		TokenType:           "Bearer",
+		CodeChallenge:       login.CodeChallenge,
+		CodeChallengeMethod: login.CodeChallengeMethod,
+	}
+
+	c.JSON(http.StatusOK, ret)
 }
