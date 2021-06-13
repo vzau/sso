@@ -1,7 +1,11 @@
 package v1
 
 import (
+	"fmt"
 	"net"
+	"net/http"
+	"net/url"
+	"os"
 	"time"
 
 	"github.com/dhawton/log4g"
@@ -17,6 +21,7 @@ type AuthorizeRequest struct {
 	Scope               string `form:"scope" validation:"-"`
 	CodeChallengeMethod string `form:"code_challenge_method"`
 	CodeChallenge       string `form:"code_challenge"`
+	State               string `form:"state"`
 }
 
 func GetAuthorize(c *gin.Context) {
@@ -63,7 +68,7 @@ func GetAuthorize(c *gin.Context) {
 		RedirectURI:         req.RedirectURI,
 		Client:              client,
 		ClientID:            client.ID,
-		State:               "",
+		State:               req.State,
 		CodeChallenge:       req.CodeChallenge,
 		CodeChallengeMethod: req.CodeChallengeMethod,
 		Scope:               req.Scope,
@@ -90,5 +95,9 @@ func GetAuthorize(c *gin.Context) {
 	log4g.Category("test").Debug(host)
 	c.SetCookie("sso_token", login.Token, int(time.Minute)*5, "/", host, false, true)
 
-	//c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf("https://login.vatusa.net/uls/v2/login?fac=ZDV&url=%s", os.Getenv("VATUSA_ULS_RETURN_ID")))
+	redirect_uri := url.QueryEscape(os.Getenv("VATSIM_REDIRECT_URI"))
+	vatsim_url := fmt.Sprintf("https://auth.vatsim.net/oauth/authorize?client_id=%s&redirect_uri=%s&scope=%s&response_type=code", os.Getenv("VATSIM_OAUTH_CLIENT_ID"), redirect_uri, url.QueryEscape("full_name email vatsim_details country"))
+	fmt.Println(vatsim_url)
+
+	c.Redirect(http.StatusTemporaryRedirect, vatsim_url)
 }
