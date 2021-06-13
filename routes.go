@@ -20,6 +20,7 @@ func SetupRoutes(engine *gin.Engine) {
 	{
 		v1Router.GET("/authorize", v1.GetAuthorize)
 		v1Router.GET("/callback", v1.GetCallback)
+		v1Router.GET("/certs", v1.GetCerts)
 		v1Router.GET("/token", v1.GetAuthorize)
 	}
 }
