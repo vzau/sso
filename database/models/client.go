@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/dhawton/log4g"
 )
@@ -12,6 +13,8 @@ type OAuthClient struct {
 	ClientId     string `json:"client_id" gorm:"type:varchar(128)"`
 	ClientSecret string `json:"-" gorm:"type:varchar(255)"`
 	RedirectURIs string `json:"return_uris" gorm:"type:text"`
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 func (c *OAuthClient) ValidURI(uri string) bool {
