@@ -107,7 +107,7 @@ func GetCallback(c *gin.Context) {
 	}
 
 	user := &models.User{}
-	if err = models.DB.Where("cid = ?", userResult.cid).First(&user).Error; err != nil {
+	if err = models.DB.First(&user, userResult.cid).Error; err != nil {
 		handleError(c, "You are not part of our roster, so you are unable to login.")
 		return
 	}
