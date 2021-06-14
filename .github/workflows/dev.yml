@@ -39,6 +39,6 @@ jobs:
       - name: Deploy image to cluster
         uses: actions-hub/kubectl@master
         env:
-          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+          KUBE_CONFIG: ${{ secrets.KUBECTL }}
         with:
           args: rollout restart deployment/sso -n dev
