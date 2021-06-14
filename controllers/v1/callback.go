@@ -11,6 +11,7 @@ import (
 
 	"github.com/dhawton/log4g"
 	"github.com/gin-gonic/gin"
+	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jwt"
 	gonanoid "github.com/matoous/go-nanoid/v2"
@@ -60,8 +61,8 @@ func GetCallback(c *gin.Context) {
 
 	result := make(chan Result)
 	go func() {
-		key, _ := jwk.Parse([]byte(os.Getenv("VATUSA_ULS_JWK")))
-		_, err := jwt.Parse([]byte(token), jwt.WithKeySet(key), jwt.WithValidate(true))
+		key, _ := jwk.ParseKey([]byte(os.Getenv("VATUSA_ULS_JWK")))
+		_, err := jwt.Parse([]byte(token), jwt.WithVerify(jwa.SignatureAlgorithm(key.Algorithm()), key), jwt.WithValidate(true))
 		if err != nil {
 			log4g.Category("controllers/callback").Error("Error getting token information from VATUSA: " + err.Error())
 			result <- Result{cid: 0, err: err}
