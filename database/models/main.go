@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/dhawton/log4g"
+	"gitlab.com/kzdv/sso/database/seed"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -33,6 +34,7 @@ func Connect(user string, pass string, hostname string, port string, database st
 	}
 
 	db.AutoMigrate(&OAuthClient{}, &OAuthLogin{}, &Rating{}, &User{})
+	seed.CheckSeeds()
 
 	DB = db
 }
