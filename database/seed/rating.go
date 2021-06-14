@@ -34,7 +34,7 @@ func SeedRating() {
 	var ratingsDecoded []RatingInfo
 	err := json.Unmarshal([]byte(ratings), &ratingsDecoded)
 	if err != nil {
-		log4g.Category("SeedRating").Error("Could not decode ratings for seeding")
+		log4g.Category("SeedRating").Error("Could not decode ratings for seeding: " + err.Error())
 	}
 
 	for k, v := range ratingsDecoded {
