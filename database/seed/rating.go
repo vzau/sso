@@ -27,7 +27,7 @@ func SeedRating() {
 			{"short":"I2","long":"Instructor 2"},
 			{"short":"I3","long":"Senior Instructor"},
 			{"short":"SUP","long":"Supervisor"},
-			{"short":"ADM","long":"Administrator"},
+			{"short":"ADM","long":"Administrator"}
 		]
 	`
 
