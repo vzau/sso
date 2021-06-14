@@ -94,7 +94,7 @@ func GetAuthorize(c *gin.Context) {
 	log4g.Category("test").Debug(host)
 	c.SetCookie("sso_token", login.Token, int(time.Minute)*5, "/", host, false, true)
 
-	redirect_url := fmt.Sprintf("https://login.vatusa.net/uls/v2/login?fac=ZDV&url=%s", os.Getenv("VATUSA_ULS_REDIRECT_ID"))
+	redirect_url := fmt.Sprintf("https://login.vatusa.net/uls/v2/login?fac=ZDV&url=%s&rfc7519_compliance", os.Getenv("VATUSA_ULS_REDIRECT_ID"))
 
 	/*
 		redirect_uri := url.QueryEscape(os.Getenv("VATSIM_REDIRECT_URI"))
