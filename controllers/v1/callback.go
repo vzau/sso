@@ -27,23 +27,28 @@ type UserResponse struct {
 }
 
 func GetCallback(c *gin.Context) {
-	token := c.Param("token")
-	if len(token) < 1 {
-		c.HTML(http.StatusInternalServerError, "error.tmpl", "Invalid response received from Authenticator or Authentication cancelled.")
+	if _, cancel := c.GetQuery("cancel"); cancel {
+		handleError(c, "Authentication cancelled.")
+		return
+	}
+
+	token, exists := c.GetQuery("token")
+	if !exists || len(token) < 1 {
+		handleError(c, "Invalid response received from Authenticator or Authentication cancelled.")
 		return
 	}
 
 	cookie, err := c.Cookie("sso_token")
 	if err != nil {
 		log4g.Category("controllers/callback").Error("Could not parse sso_token cookie, expired? " + err.Error())
-		c.HTML(http.StatusInternalServerError, "error.tmpl", "Could not parse session cookie. Is it expired?")
+		handleError(c, "Could not parse session cookie. Is it expired?")
 		return
 	}
 
 	login := models.OAuthLogin{}
 	if err = models.DB.Where("token = ? AND created_at < ?", cookie, time.Now().Add(time.Minute*5)).First(&login).Error; err != nil {
 		log4g.Category("controllers/callback").Error("Token used that isn't in db, duplicate request? " + cookie)
-		c.HTML(http.StatusInternalServerError, "error.tmpl", "Token is invalid.")
+		handleError(c, "Token is invalid.")
 		return
 	}
 
