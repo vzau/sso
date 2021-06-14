@@ -36,9 +36,9 @@ jobs:
         run: docker build . -t kzdv/sso:dev
       - name: Push Docker Image
         run: docker push kzdv/sso:dev
-#      - name: Deploy image to cluster
-#        uses: actions-hub/kubectl@master
-#        env:
-#          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
-#        with:
-#          args: 
+      - name: Deploy image to cluster
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+        with:
+          args: rollout restart deployment/sso -n dev
