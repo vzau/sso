@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"net/url"
 	"os"
 	"time"
 
@@ -95,9 +94,11 @@ func GetAuthorize(c *gin.Context) {
 	log4g.Category("test").Debug(host)
 	c.SetCookie("sso_token", login.Token, int(time.Minute)*5, "/", host, false, true)
 
-	redirect_uri := url.QueryEscape(os.Getenv("VATSIM_REDIRECT_URI"))
-	vatsim_url := fmt.Sprintf("https://auth.vatsim.net/oauth/authorize?client_id=%s&redirect_uri=%s&scope=%s&response_type=code", os.Getenv("VATSIM_OAUTH_CLIENT_ID"), redirect_uri, url.QueryEscape("full_name email vatsim_details country"))
-	fmt.Println(vatsim_url)
+	redirect_url := fmt.Sprintf("https://login.vatusa.net/uls/v2/login?fac=ZDV&url=%s", os.Getenv("VATUSA_ULS_REDIRECT_ID"))
 
-	c.Redirect(http.StatusTemporaryRedirect, vatsim_url)
+	/*
+		redirect_uri := url.QueryEscape(os.Getenv("VATSIM_REDIRECT_URI"))
+		vatsim_url := fmt.Sprintf("https://auth.vatsim.net/oauth/authorize?client_id=%s&redirect_uri=%s&scope=%s&response_type=code", os.Getenv("VATSIM_OAUTH_CLIENT_ID"), redirect_uri, url.QueryEscape("full_name email vatsim_details country"))
+	*/
+	c.Redirect(http.StatusTemporaryRedirect, redirect_url)
 }

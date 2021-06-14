@@ -13,6 +13,9 @@ RUN ls -l && \
     CGO_ENABLED=0 GOOS=linux go build -a -o app .
 
 FROM alpine:latest
-RUN mkdir /app
+RUN mkdir -p /app/templates
 COPY --from=builder /app/app /app/sso
-ENTRYPOINT [ "./app/sso" ]
+ADD templates /app/templates
+RUN ls /app && echo "----" && ls /app/templates
+WORKDIR /app
+ENTRYPOINT [ "./sso" ]
