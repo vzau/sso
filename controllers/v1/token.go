@@ -10,7 +10,6 @@ import (
 
 	"github.com/dhawton/log4g"
 	"github.com/gin-gonic/gin"
-	"github.com/goccy/go-json"
 	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jwt"
@@ -35,11 +34,6 @@ type TokenResponse struct {
 }
 
 func PostToken(c *gin.Context) {
-	params, _ := json.Marshal(c.Params)
-	log4g.Category("controllers/authorize").Debug(string(params))
-	form, _ := json.Marshal(c.Request.PostForm)
-	log4g.Category("controllers/authorize").Debug(string(form))
-
 	treq := TokenRequest{}
 	if err := c.ShouldBind(&treq); err != nil {
 		log4g.Category("controllers/token").Error("Invalid request, missing field(s)")
@@ -54,13 +48,13 @@ func PostToken(c *gin.Context) {
 	}
 
 	login := models.OAuthLogin{}
-	if err := models.DB.Where("code = ?", treq.Code).First(&login).Error; err != nil {
+	if err := models.DB.Joins("Client").Where("code = ?", treq.Code).First(&login).Error; err != nil {
 		log4g.Category("controllers/token").Error(fmt.Sprintf("Code %s not found", treq.Code))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid_request"})
 		return
 	}
 
-	//defer models.DB.Delete(&login)
+	defer models.DB.Delete(&login)
 
 	if treq.ClientId != login.Client.ClientId || treq.ClientSecret != login.Client.ClientSecret {
 		log4g.Category("controllers/token").Error(fmt.Sprintf("Invalid client: %s %s does not match %s %s", treq.ClientId, treq.ClientSecret, login.Client.ClientId, login.Client.ClientSecret))
@@ -75,25 +69,30 @@ func PostToken(c *gin.Context) {
 		return
 	}
 
-	keyset, err := jwk.Parse([]byte(os.Getenv("ZDK_JWKS")))
+	keyset, err := jwk.Parse([]byte(os.Getenv("ZDV_JWKS")))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		log4g.Category("controller/token").Error("Could not parse JWKs: " + err.Error())
 		return
 	}
 
-	key, _ := keyset.LookupKeyID(os.Getenv("ZDV_CURRENT_KEY"))
+	key, _ := keyset.LookupKeyID("2")
 	token := jwt.New()
-	token.Set(jwt.IssuerKey, "sso.kzdv.io")
+	token.Set(jwt.IssuerKey, "auth.kzdv.io")
 	token.Set(jwt.AudienceKey, login.Client.Name)
 	token.Set(jwt.SubjectKey, fmt.Sprint(login.CID))
 	token.Set(jwt.IssuedAtKey, time.Now())
-	token.Set(jwt.ExpirationKey, (time.Hour*24*7)/time.Second)
-	signed, err := jwt.Sign(token, jwa.SignatureAlgorithm(key.KeyType()), key)
+	token.Set(jwt.ExpirationKey, time.Now().Add((time.Hour * 24 * 7)).Unix())
+	signed, err := jwt.Sign(token, jwa.EdDSA, key)
+	if err != nil {
+		log4g.Category("controllers/token").Error("Failed to create JWT: " + err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid_grant"})
+		return
+	}
 
 	ret := TokenResponse{
 		AccessToken:         string(signed),
-		ExpiresIn:           int(time.Now().Add(time.Hour * 24 * 7).Unix()),
+		ExpiresIn:           int(time.Hour*24*7) / int(time.Second),
 		TokenType:           "Bearer",
 		CodeChallenge:       login.CodeChallenge,
 		CodeChallengeMethod: login.CodeChallengeMethod,

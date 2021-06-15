@@ -9,7 +9,6 @@ import (
 
 	"github.com/dhawton/log4g"
 	"github.com/gin-gonic/gin"
-	"github.com/goccy/go-json"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"gitlab.com/kzdv/sso/database/models"
 )
@@ -25,8 +24,6 @@ type AuthorizeRequest struct {
 }
 
 func GetAuthorize(c *gin.Context) {
-	params, _ := json.Marshal(c.Params)
-	log4g.Category("controllers/authorize").Debug(string(params))
 	req := AuthorizeRequest{}
 	if err := c.ShouldBind(&req); err != nil {
 		handleError(c, "Invalid OAuth2 Request.")
