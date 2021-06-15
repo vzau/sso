@@ -60,10 +60,10 @@ func PostToken(c *gin.Context) {
 		return
 	}
 
-	defer models.DB.Delete(&login)
+	//defer models.DB.Delete(&login)
 
 	if treq.ClientId != login.Client.ClientId || treq.ClientSecret != login.Client.ClientSecret {
-		log4g.Category("controllers/token").Error(fmt.Sprintf("Invalid client: %s %s", treq.ClientId, treq.ClientSecret))
+		log4g.Category("controllers/token").Error(fmt.Sprintf("Invalid client: %s %s does not match %s %s", treq.ClientId, treq.ClientSecret, login.Client.ClientId, login.Client.ClientSecret))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid_client"})
 		return
 	}
