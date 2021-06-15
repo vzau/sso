@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/ZDV-Web-Team/sso/middleware"
 	"github.com/gin-gonic/gin"
+	"gitlab.com/kzdv/sso/middleware"
 )
 
 type Server struct {

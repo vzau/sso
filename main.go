@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ZDV-Web-Team/sso/lib/database/models"
 	"github.com/common-nighthawk/go-figure"
 	"github.com/dhawton/log4g"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"gitlab.com/kzdv/sso/database/models"
+	"gitlab.com/kzdv/sso/database/seed"
 )
 
 var log = log4g.Category("main")
@@ -44,9 +45,7 @@ func main() {
 
 	log.Info("Connecting to database and handling migrations")
 	models.Connect(Getenv("DB_USERNAME", "root"), Getenv("DB_PASSWORD", "secret"), Getenv("DB_HOSTNAME", "localhost"), Getenv("DB_PORT", "3306"), Getenv("DB_DATABASE", "zdv"))
-
-	log.Info("Setting up bluemonday policy")
-	CreatePolicy()
+	seed.CheckSeeds()
 
 	log.Info("Configuring Gin Server")
 	server := NewServer(appenv)
