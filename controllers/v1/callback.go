@@ -114,6 +114,7 @@ func GetCallback(c *gin.Context) {
 
 	login.CID = user.CID
 	login.Code, _ = gonanoid.New(32)
+	go models.DB.Save(&login)
 
 	c.Redirect(302, fmt.Sprintf("%s?code=%s&state=%s", login.RedirectURI, login.Code, login.State))
 }
