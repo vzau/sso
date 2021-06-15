@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/common-nighthawk/go-figure"
 	"github.com/dhawton/log4g"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/robfig/cron/v3"
 	"gitlab.com/kzdv/sso/database/models"
 	"gitlab.com/kzdv/sso/database/seed"
 )
@@ -49,6 +51,14 @@ func main() {
 
 	log.Info("Configuring Gin Server")
 	server := NewServer(appenv)
+
+	log.Info("Configuring scheduled jobs")
+	jobs := cron.New()
+	jobs.AddFunc("@every 5m", func() {
+		if err := models.DB.Where("created_at >= ?", time.Now().Add(time.Minute*30).Unix()).Delete(&models.OAuthLogin{}).Error; err != nil {
+			log4g.Category("job/cleanup").Error(fmt.Sprintf("Error cleaning up old codes: %s", err.Error()))
+		}
+	})
 
 	log.Info("Done with setup, starting web server...")
 	server.engine.Run(fmt.Sprintf(":%s", Getenv("PORT", "3000")))
