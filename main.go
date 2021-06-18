@@ -59,6 +59,7 @@ func main() {
 			log4g.Category("job/cleanup").Error(fmt.Sprintf("Error cleaning up old codes: %s", err.Error()))
 		}
 	})
+	jobs.Start()
 
 	log.Info("Done with setup, starting web server...")
 	server.engine.Run(fmt.Sprintf(":%s", Getenv("PORT", "3000")))

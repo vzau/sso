@@ -8,9 +8,8 @@ import (
 )
 
 func SetupRoutes(engine *gin.Engine) {
-	engine.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "OK"})
-	})
+	engine.StaticFile("/", "./templates/docs.html")
+	engine.StaticFile("/openapi.json", "./templates/openapi.json")
 
 	engine.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "PONG"})

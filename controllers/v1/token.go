@@ -56,8 +56,24 @@ func PostToken(c *gin.Context) {
 
 	defer models.DB.Delete(&login)
 
+	if c.Query("client_id") == "" || c.Query("client_secret") == "" {
+		// Not in query string, let's grab from Authorization header
+		auth := c.Request.Header.Get("Authorization")
+		if auth == "" {
+			log4g.Category("controllers/token").Error("Invalid client: no creds passed.")
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid_client"})
+			return
+		}
+
+		if fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", login.Client.ClientId, login.Client.ClientSecret)))) != auth {
+			log4g.Category("controllers/token").Error("Invalid client: creds did not match.")
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid_client"})
+			return
+		}
+	}
+
 	if treq.ClientId != login.Client.ClientId || treq.ClientSecret != login.Client.ClientSecret {
-		log4g.Category("controllers/token").Error(fmt.Sprintf("Invalid client: %s %s does not match %s %s", treq.ClientId, treq.ClientSecret, login.Client.ClientId, login.Client.ClientSecret))
+		log4g.Category("controllers/token").Error(fmt.Sprintf("Invalid client: %s does not match %s", treq.ClientId, login.Client.ClientId))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid_client"})
 		return
 	}
