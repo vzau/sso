@@ -53,4 +53,4 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions-hub/kubectl@master
         with:
-          args: rollout status deployment/sso
+          args: rollout status deployment/sso -n prod
