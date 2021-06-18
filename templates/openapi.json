@@ -1,16 +1,16 @@
 {
   "openapi": "3.0.2",
   "info": {
-    "title": "OTK Server APIs",
-    "version": "4.3.1",
-    "description": "All API's available in OAuth Toolkit server"
+    "title": "Denver ARTCC OAuth2 Server",
+    "version": "1.0.0",
+    "description": "Documentation of the OAuth2 implementation at vZDV.  See RFC 6749 (https://tools.ietf.org/html/rfc6749) and RFC 7636 (https://datatracker.ietf.org/doc/html/rfc7636) for more details."
   },
   "paths": {
     "/v1/authorize": {
       "get": {
-        "tags": ["Authorization Server APIs"],
+        "tags": ["Authentication"],
         "description": "Initializes an OAuth 2.0 flow using a response_type=token. See RFC 6749 (https://tools.ietf.org/html/rfc6749) and RFC 7636 (https://datatracker.ietf.org/doc/html/rfc7636) for more details.",
-        "operationId": "Get_request_authorization",
+        "operationId": "Authorize",
         "parameters": [
           {
             "name": "client_id",
@@ -119,9 +119,9 @@
     },
     "/v1/token": {
       "post": {
-        "tags": ["Token Server APIs"],
+        "tags": ["Authentication"],
         "description": "Request access_token using OAuth 2.0 grant_type: authorization_code. See RFC 6749 for more details.",
-        "operationId": "Create_request_token",
+        "operationId": "Get Token",
         "parameters": [
           {
             "name": "authorization",
@@ -229,12 +229,12 @@
     },
     "/v1/certs": {
       "get": {
-        "tags": ["Authorization Server APIs"],
-        "operationId": "Get_jwk_set_",
-        "description": "This endpoint implements the JWKS_URI as specified at http://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata",
+        "tags": ["Authentication"],
+        "operationId": "Get JWK Keyset",
+        "description": "",
         "responses": {
           "200": {
-            "description": "JWK set containing public keys that enable clients to validate a JSON Web Token (JWT) issued by this OAuth2 Server",
+            "description": "Get JWK Keyset used by this OAuth2 Server",
             "content": {
               "application/json": {
                 "schema": {
@@ -264,8 +264,7 @@
           "500": {
             "description": "unknown error"
           }
-        },
-        "summary": "OpenID Connect jwks endpoint"
+        }
       }
     }
   },
@@ -283,18 +282,6 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/TokenData"
-            }
-          }
-        }
-      }
-    },
-    "securitySchemes": {
-      "OAuth2": {
-        "type": "oauth2",
-        "flows": {
-          "implicit": {
-            "authorizationUrl": "${host_oauth2_auth_server}${oauth2_auth_path}",
-            "scopes": {
             }
           }
         }
@@ -322,66 +309,19 @@
             "type": "string",
             "description": "The issued scope",
             "example": "oob"
+          },
+          "code_challenge": {
+            "type": "string",
+            "description": "The calculated code challenge from the verifier using method",
+            "example": "jsjdfj312ujtuug"
+          },
+          "code_challenge_method": {
+            "type": "string",
+            "description": "Code challenge method (S256 required)",
+            "example": "S256"
           }
         },
         "title": "TokenData"
-      },
-      "OAuthObject": {
-        "type": "object",
-        "properties": {
-          "client": {
-            "$ref": "#/components/schemas/ClientObject"
-          },
-          "system_endpoints": {
-            "$ref": "#/components/schemas/SystemEndpointsObject"
-          },
-          "oauth_protected_endpoints": {
-            "$ref": "#/components/schemas/OAuthProtectedEndpointsObject"
-          }
-        },
-        "title": "OAuthObject"
-      },
-      "SystemEndpointsObject": {
-        "type": "object",
-        "properties": {
-          "authorization_endpoint_path": {
-            "type": "string",
-            "description": "Authorization endpoint",
-            "example": "/auth/oauth/v2/authorize"
-          },
-          "token_endpoint_path": {
-            "type": "string",
-            "description": "Token endpoint",
-            "example": "/auth/oauth/v2/token"
-          },
-          "token_revocation_endpoint_path": {
-            "type": "string",
-            "description": "Token revocation endpoint",
-            "example": "/auth/oauth/v2/token/revoke"
-          },
-          "usersession_logout_endpoint_path": {
-            "type": "string",
-            "description": "User logout endpoint",
-            "example": "/connect/session/logout"
-          }
-        },
-        "title": "SystemEndpointsObject"
-      },
-      "OAuthProtectedEndpointsObject": {
-        "type": "object",
-        "properties": {
-          "userinfo_endpoint_path": {
-            "type": "string",
-            "description": "UserInfo endpoint",
-            "example": "/openid/connect/v1/userinfo"
-          },
-          "usersession_status_endpoint_path": {
-            "type": "string",
-            "description": "User Session status endpoint",
-            "example": "/connect/session/status"
-          }
-        },
-        "title": "OAuthProtectedEndpointsObject"
       }
     }
   }
