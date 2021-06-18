@@ -48,7 +48,7 @@ jobs:
         env:
           KUBE_CONFIG: ${{ secrets.KUBECTL }}
         with:
-          args: set image deployment/sso sso=kzdv/sso:${{ steps.prep.outputs.tags }} -n prod
+          args: set image deployment/sso sso=${{ steps.prep.outputs.tags }} -n prod
       - name: Verify deployment
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions-hub/kubectl@master
