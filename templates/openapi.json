@@ -1,0 +1,388 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "OTK Server APIs",
+    "version": "4.3.1",
+    "description": "All API's available in OAuth Toolkit server"
+  },
+  "paths": {
+    "/v1/authorize": {
+      "get": {
+        "tags": ["Authorization Server APIs"],
+        "description": "Initializes an OAuth 2.0 flow using a response_type=token. See RFC 6749 (https://tools.ietf.org/html/rfc6749) and RFC 7636 (https://datatracker.ietf.org/doc/html/rfc7636) for more details.",
+        "operationId": "Get_request_authorization",
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "query",
+            "required": true,
+            "x-is-map": false,
+            "description": "This is the 'client_id' of the requesting client. Maximum 255 characters.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "response_type",
+            "in": "query",
+            "required": true,
+            "x-is-map": false,
+            "description": "Only supported response_type is token",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "token"
+              ]
+            }
+          },
+          {
+            "name": "redirect_uri",
+            "in": "query",
+            "required": true,
+            "x-is-map": false,
+            "description": "The 'redirect_uri' that was registered for this client. It is required if multiple redirect_uri's have been registered for this client.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "x-is-map": false,
+            "description": "Not used. Will be shared back verbatim if provided.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code_challenge",
+            "in": "query",
+            "required": true,
+            "x-is-map": false,
+            "description": "The code_challenge value in the context of PKCE (RFC 7636).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code_challenge_method",
+            "in": "query",
+            "required": true,
+            "x-is-map": false,
+            "description": "The method that was used to create the code_challenge (S256).",
+            "schema": {
+              "type": "string",
+              "enum": ["S256"]
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "x-is-map": false,
+            "description": "Value opaque to the server, used by the client to track its session. It will be returned as received.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "location": {
+                "description": "Redirect the user away!",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters | Invalid redirect_uri | invalid client type | invalid response type | invalid code_challenge/method"
+          },
+          "401": {
+            "description": "The client could not be authenticated."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "405": {
+            "description": "The HTTP method is not valid"
+          },
+          "500": {
+            "description": "unknown error"
+          }
+        }
+      }
+    },
+    "/v1/token": {
+      "post": {
+        "tags": ["Token Server APIs"],
+        "description": "Request access_token using OAuth 2.0 grant_type: authorization_code. See RFC 6749 for more details.",
+        "operationId": "Create_request_token",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "x-is-map": false,
+            "description": "The HTTP basic authorization header containing the client credentials as base64 encoded string (authorization: Basic base64(client_id:client_secret)). This can only be used INSTEAD of the parameters 'client_id', 'client_secret'.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "client_id",
+            "in": "query",
+            "required": false,
+            "x-is-map": false,
+            "description": "The client_id. This can only be used INSTEAD of using the authorization header. Maximum 255 characters.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "client_secret",
+            "in": "query",
+            "required": false,
+            "x-is-map": false,
+            "description": "The client_secret. This can only be used INSTEAD of using the authorization header.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "grant_type",
+            "in": "query",
+            "required": true,
+            "x-is-map": false,
+            "description": "For grant_type=authorization_code: client_id, client_secret, code, and redirect_uri are required.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "authorization_code"
+              ],
+              "default": "authorization_code"
+            }
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "x-is-map": false,
+            "description": "Required if grant_type is authorization_code",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "redirect_uri",
+            "in": "query",
+            "required": false,
+            "x-is-map": false,
+            "description": "Required if grant_type is authorization_code.  Must contain a valid auth code",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "x-is-map": false,
+            "description": "Not used.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code_verifier",
+            "in": "query",
+            "required": true,
+            "x-is-map": false,
+            "description": "A random value of 43-256 characters. See https://tools.ietf.org/html/rfc7636#section-4 for details.  This parameter is required only when a code_challenge is provided with the authorization request for this session.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/authToken200"
+          },
+          "400": {
+            "description": "Bad Request, see x-ca-err for possible error codes"
+          },
+          "401": {
+            "description": "The client could not be authenticated."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "500": {
+            "description": "Unknown error."
+          }
+        }
+      }
+    },
+    "/v1/certs": {
+      "get": {
+        "tags": ["Authorization Server APIs"],
+        "operationId": "Get_jwk_set_",
+        "description": "This endpoint implements the JWKS_URI as specified at http://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata",
+        "responses": {
+          "200": {
+            "description": "JWK set containing public keys that enable clients to validate a JSON Web Token (JWT) issued by this OAuth2 Server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "keys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        {
+                          "kty": "RSA",
+                          "kid": "default_ssl_key",
+                          "use": "sig",
+                          "n": "58BezRBeYOM3rOo1vcllcLc8QAwz6AmQj4EvGUqATMUz4bfYJ9Lf2wb9xCQhSLSkndfFAF5V754G0mRelBGK7yIja-M-EBXoJeT3nvwA46g7MkZGf11uP2dz2k4CkLdFHnlGzvuLQVBQpqbz-O_hFfEDxBk9zV4shR8O_iGv4fDi0dNHZfXzxkr_iH8Oj2qQeZFvv61I4RffeNmx04lYea2KFsF_8rWDlENWAr8RbqpY_y5lbxgC_xyBunTkoIEommqz55ZFIcklYerJUVSeIA90KMyM60wZh0JF_T5kuXEs-3AWh8Bkx-sVE2hu5S5x4_lADsPojLwWTT7or_sw9Q",
+                          "e": "AQAB"
+                        }
+                      ],
+                      "description": "JWK set in JSON array format"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "unknown error"
+          }
+        },
+        "summary": "OpenID Connect jwks endpoint"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://auth.denartcc.org",
+      "description": "Production OAuth2 Server"
+    }
+  ],
+  "components": {
+    "responses": {
+      "authToken200": {
+        "description": "A success response that includes the issued token, expire and other details from the OAuth Server",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/TokenData"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "OAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "${host_oauth2_auth_server}${oauth2_auth_path}",
+            "scopes": {
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "TokenData": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "The Access Token for the given token request"
+          },
+          "token_type": {
+            "type": "string",
+            "description": "The Token Type issued",
+            "example": "Bearer"
+          },
+          "expires_in": {
+            "type": "string",
+            "description": "The expiry time, in seconds",
+            "example": "3600"
+          },
+          "scope": {
+            "type": "string",
+            "description": "The issued scope",
+            "example": "oob"
+          }
+        },
+        "title": "TokenData"
+      },
+      "OAuthObject": {
+        "type": "object",
+        "properties": {
+          "client": {
+            "$ref": "#/components/schemas/ClientObject"
+          },
+          "system_endpoints": {
+            "$ref": "#/components/schemas/SystemEndpointsObject"
+          },
+          "oauth_protected_endpoints": {
+            "$ref": "#/components/schemas/OAuthProtectedEndpointsObject"
+          }
+        },
+        "title": "OAuthObject"
+      },
+      "SystemEndpointsObject": {
+        "type": "object",
+        "properties": {
+          "authorization_endpoint_path": {
+            "type": "string",
+            "description": "Authorization endpoint",
+            "example": "/auth/oauth/v2/authorize"
+          },
+          "token_endpoint_path": {
+            "type": "string",
+            "description": "Token endpoint",
+            "example": "/auth/oauth/v2/token"
+          },
+          "token_revocation_endpoint_path": {
+            "type": "string",
+            "description": "Token revocation endpoint",
+            "example": "/auth/oauth/v2/token/revoke"
+          },
+          "usersession_logout_endpoint_path": {
+            "type": "string",
+            "description": "User logout endpoint",
+            "example": "/connect/session/logout"
+          }
+        },
+        "title": "SystemEndpointsObject"
+      },
+      "OAuthProtectedEndpointsObject": {
+        "type": "object",
+        "properties": {
+          "userinfo_endpoint_path": {
+            "type": "string",
+            "description": "UserInfo endpoint",
+            "example": "/openid/connect/v1/userinfo"
+          },
+          "usersession_status_endpoint_path": {
+            "type": "string",
+            "description": "User Session status endpoint",
+            "example": "/connect/session/status"
+          }
+        },
+        "title": "OAuthProtectedEndpointsObject"
+      }
+    }
+  }
+}
