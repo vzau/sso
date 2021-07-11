@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/dhawton/log4g"
 	"github.com/gin-gonic/gin"
 	gonanoid "github.com/matoous/go-nanoid/v2"
-	"gitlab.com/kzdv/sso/database/models"
+	"github.com/vchicago/sso/database/models"
+	"github.com/vchicago/sso/utils"
+	dbTypes "github.com/vchicago/types/database"
 )
 
 type AuthorizeRequest struct {
@@ -30,13 +31,13 @@ func GetAuthorize(c *gin.Context) {
 		return
 	}
 
-	client := models.OAuthClient{}
+	client := dbTypes.OAuthClient{}
 	if err := models.DB.Where("client_id = ?", req.ClientId).First(&client).Error; err != nil {
 		handleError(c, "Invalid Client ID Received.")
 		return
 	}
 
-	if !client.ValidURI(req.RedirectURI) {
+	if ok, _ := client.ValidURI(req.RedirectURI); !ok {
 		log4g.Category("controllers/authorize").Error("Unauthorized redirect uri received from client " + client.ClientId + ", " + req.RedirectURI)
 		handleError(c, "The Return URI was not authorized.")
 		return
@@ -61,7 +62,7 @@ func GetAuthorize(c *gin.Context) {
 		return
 	}
 
-	login := models.OAuthLogin{
+	login := dbTypes.OAuthLogin{
 		Token:               token,
 		UserAgent:           c.Request.UserAgent(),
 		RedirectURI:         req.RedirectURI,
@@ -94,7 +95,7 @@ func GetAuthorize(c *gin.Context) {
 	log4g.Category("test").Debug(host)
 	c.SetCookie("sso_token", login.Token, int(time.Minute)*5, "/", host, false, true)
 
-	redirect_url := fmt.Sprintf("https://login.vatusa.net/uls/v2/login?fac=ZDV&url=%s&rfc7519_compliance", os.Getenv("VATUSA_ULS_REDIRECT_ID"))
+	redirect_url := fmt.Sprintf("https://login.vatusa.net/uls/v2/login?fac=%s&url=%s&rfc7519_compliance", utils.Getenv("ULS_FACILITY_ID", "ZAU"), utils.Getenv("VATUSA_ULS_REDIRECT_ID", "1"))
 
 	/*
 		redirect_uri := url.QueryEscape(os.Getenv("VATSIM_REDIRECT_URI"))

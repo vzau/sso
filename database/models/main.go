@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/dhawton/log4g"
+	dbTypes "github.com/vchicago/types/database"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -32,7 +33,7 @@ func Connect(user string, pass string, hostname string, port string, database st
 		panic("Max attempts occured. Aborting startup.")
 	}
 
-	db.AutoMigrate(&OAuthClient{}, &OAuthLogin{}, &Rating{}, &User{})
+	db.AutoMigrate(&dbTypes.OAuthClient{}, &dbTypes.OAuthLogin{}, &dbTypes.Rating{}, &dbTypes.User{})
 
 	DB = db
 }

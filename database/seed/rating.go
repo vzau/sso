@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 
 	"github.com/dhawton/log4g"
-	"gitlab.com/kzdv/sso/database/models"
+	"github.com/vchicago/sso/database/models"
+	dbTypes "github.com/vchicago/types/database"
 	"gorm.io/gorm/clause"
 )
 
@@ -38,7 +39,7 @@ func SeedRating() {
 	}
 
 	for k, v := range ratingsDecoded {
-		rating := &models.Rating{
+		rating := &dbTypes.Rating{
 			ID:    k,
 			Long:  v.Long,
 			Short: v.Short,

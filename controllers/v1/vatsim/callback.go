@@ -15,7 +15,7 @@ import (
 	"github.com/dhawton/log4g"
 	"github.com/gin-gonic/gin"
 	gonanoid "github.com/matoous/go-nanoid/v2"
-	"gitlab.com/kzdv/sso/database/models"
+	"github.com/vchicago/sso/database/models"
 )
 
 type OAuthResponse struct {

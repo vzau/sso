@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	v1 "gitlab.com/kzdv/sso/controllers/v1"
+	v1 "github.com/vchicago/sso/controllers/v1"
 )
 
 func SetupRoutes(engine *gin.Engine) {

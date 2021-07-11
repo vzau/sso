@@ -15,7 +15,8 @@ import (
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jwt"
 	gonanoid "github.com/matoous/go-nanoid/v2"
-	"gitlab.com/kzdv/sso/database/models"
+	"github.com/vchicago/sso/database/models"
+	dbTypes "github.com/vchicago/types/database"
 )
 
 type Result struct {
@@ -46,7 +47,7 @@ func GetCallback(c *gin.Context) {
 		return
 	}
 
-	login := models.OAuthLogin{}
+	login := dbTypes.OAuthLogin{}
 	if err = models.DB.Where("token = ? AND created_at < ?", cookie, time.Now().Add(time.Minute*5)).First(&login).Error; err != nil {
 		log4g.Category("controllers/callback").Error("Token used that isn't in db, duplicate request? " + cookie)
 		handleError(c, "Token is invalid.")
@@ -106,7 +107,7 @@ func GetCallback(c *gin.Context) {
 		return
 	}
 
-	user := &models.User{}
+	user := &dbTypes.User{}
 	if err = models.DB.First(&user, userResult.cid).Error; err != nil {
 		handleError(c, "You are not part of our roster, so you are unable to login.")
 		return

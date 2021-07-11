@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.2",
   "info": {
-    "title": "Denver ARTCC OAuth2 Server",
+    "title": "Chicago ARTCC OAuth2 Server",
     "version": "1.0.0",
-    "description": "Documentation of the OAuth2 implementation at vZDV.  See RFC 6749 (https://tools.ietf.org/html/rfc6749) and RFC 7636 (https://datatracker.ietf.org/doc/html/rfc7636) for more details."
+    "description": "Documentation of the OAuth2 implementation at vZAU.  See RFC 6749 (https://tools.ietf.org/html/rfc6749) and RFC 7636 (https://datatracker.ietf.org/doc/html/rfc7636) for more details."
   },
   "paths": {
     "/v1/authorize": {
@@ -270,7 +270,7 @@
   },
   "servers": [
     {
-      "url": "https://auth.denartcc.org",
+      "url": "https://auth.chicagoartcc.org",
       "description": "Production OAuth2 Server"
     }
   ],
