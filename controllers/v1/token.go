@@ -86,7 +86,7 @@ func PostToken(c *gin.Context) {
 		return
 	}
 
-	keyset, err := jwk.Parse([]byte(os.Getenv("ZDV_JWKS")))
+	keyset, err := jwk.Parse([]byte(os.Getenv("SSO_JWKS")))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		log4g.Category("controller/token").Error("Could not parse JWKs: " + err.Error())

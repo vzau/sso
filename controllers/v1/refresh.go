@@ -24,7 +24,7 @@ func GetRefresh(c *gin.Context) {
 			c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
 			return
 		}
-		keyset, _ := jwk.Parse([]byte(os.Getenv("ZDV_JWKS")))
+		keyset, _ := jwk.Parse([]byte(os.Getenv("SSO_JWKS")))
 
 		t, err := jwt.Parse(parts[1], jwt.WithKeySet(keyset))
 		if err != nil {
@@ -32,7 +32,7 @@ func GetRefresh(c *gin.Context) {
 			return
 		}
 
-		key, _ := keyset.LookupKeyID(os.Getenv("ZDV_CURRENT_KEY"))
+		key, _ := keyset.LookupKeyID(os.Getenv("SSO_CURRENT_KEY"))
 
 		token := jwt.New()
 		token.Set(jwt.IssuerKey, "sso.kzdv.io")

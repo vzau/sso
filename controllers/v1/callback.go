@@ -62,7 +62,7 @@ func GetCallback(c *gin.Context) {
 
 	result := make(chan Result)
 	go func() {
-		key, _ := jwk.ParseKey([]byte(os.Getenv("VATUSA_ULS_JWK")))
+		key, _ := jwk.ParseKey([]byte(os.Getenv("ULS_JWK")))
 		_, err := jwt.Parse([]byte(token), jwt.WithVerify(jwa.SignatureAlgorithm(key.Algorithm()), key), jwt.WithValidate(true))
 		if err != nil {
 			log4g.Category("controllers/callback").Error("Error getting token information from VATUSA: " + err.Error())

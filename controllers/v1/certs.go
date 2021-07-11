@@ -16,7 +16,7 @@ type certReturn struct {
 }
 
 func GetCerts(c *gin.Context) {
-	jkeyset := os.Getenv("ZDV_JWKS")
+	jkeyset := os.Getenv("SSO_JWKS")
 	keyset, err := jwk.Parse([]byte(jkeyset))
 	if err != nil {
 		log4g.Category("controllers/certs").Error("Error parsing JWKs: " + err.Error())
