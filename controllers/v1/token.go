@@ -93,7 +93,7 @@ func PostToken(c *gin.Context) {
 		return
 	}
 
-	key, _ := keyset.LookupKeyID("2")
+	key, _ := keyset.LookupKeyID(os.Getenv("SSO_CURRENT_KEY"))
 	token := jwt.New()
 	token.Set(jwt.IssuerKey, "auth.kzdv.io")
 	token.Set(jwt.AudienceKey, login.Client.Name)
