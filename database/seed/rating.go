@@ -1,3 +1,21 @@
+/*
+   ZAU Single Sign-On
+   Copyright (C) 2021  Daniel A. Hawton <daniel@hawton.org>
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Affero General Public License as published
+   by the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Affero General Public License for more details.
+
+   You should have received a copy of the GNU Affero General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 package seed
 
 import (
@@ -10,6 +28,7 @@ import (
 )
 
 type RatingInfo struct {
+	ID    int    `json:"id"`
 	Short string `json:"short"`
 	Long  string `json:"long"`
 }
@@ -17,18 +36,20 @@ type RatingInfo struct {
 func SeedRating() {
 	var ratings = `
 		[
-			{"short":"OBS","long":"Observer"},
-			{"short":"S1","long":"Student 1"},
-			{"short":"S2","long":"Student 2"},
-			{"short":"S3","long":"Student 3"},
-			{"short":"C1","long":"Controller"},
-			{"short":"C2","long":"Controller 2"},
-			{"short":"C3","long":"Controller 3"},
-			{"short":"I1","long":"Instructor"},
-			{"short":"I2","long":"Instructor 2"},
-			{"short":"I3","long":"Senior Instructor"},
-			{"short":"SUP","long":"Supervisor"},
-			{"short":"ADM","long":"Administrator"}
+			{"id":-1,"short":"INA","long":"Inactive"},
+			{"id":0,"short":"SUS","long":"Suspended"},
+			{"id":1,"short":"OBS","long":"Observer"},
+			{"id":2,"short":"S1","long":"Student 1"},
+			{"id":3,"short":"S2","long":"Student 2"},
+			{"id":4,"short":"S3","long":"Student 3"},
+			{"id":5,"short":"C1","long":"Controller"},
+			{"id":6,"short":"C2","long":"Controller 2"},
+			{"id":7,"short":"C3","long":"Controller 3"},
+			{"id":8,"short":"I1","long":"Instructor"},
+			{"id":9,"short":"I2","long":"Instructor 2"},
+			{"id":10,"short":"I3","long":"Senior Instructor"},
+			{"id":11,"short":"SUP","long":"Supervisor"},
+			{"id":12,"short":"ADM","long":"Administrator"}
 		]
 	`
 
@@ -38,9 +59,9 @@ func SeedRating() {
 		log4g.Category("SeedRating").Error("Could not decode ratings for seeding: " + err.Error())
 	}
 
-	for k, v := range ratingsDecoded {
+	for _, v := range ratingsDecoded {
 		rating := &dbTypes.Rating{
-			ID:    k,
+			ID:    v.ID,
 			Long:  v.Long,
 			Short: v.Short,
 		}

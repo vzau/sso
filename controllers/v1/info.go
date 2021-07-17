@@ -16,27 +16,20 @@
    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package seed
+package v1
 
 import (
-	"errors"
+	"net/http"
 
-	"github.com/dhawton/log4g"
-	"github.com/vchicago/sso/database/models"
+	"github.com/gin-gonic/gin"
 	dbTypes "github.com/vchicago/types/database"
-	"gorm.io/gorm"
 )
 
-var log = log4g.Category("seed")
-
-func CheckSeeds() {
-	// Check if Ratings should be seeded
-	log.Debug("Checking ratings")
-	var r = dbTypes.Rating{}
-	if err := models.DB.Where("ID = ?", 1).First(&r).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			log.Debug("Check failed for Record Not Found, seeding Ratings")
-			SeedRating()
-		}
+func GetInfo(c *gin.Context) {
+	user := c.Keys["x-user"].(*dbTypes.User)
+	if user == nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "Not Found", "user": nil})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"message": "OK", "user": user})
 	}
 }

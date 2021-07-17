@@ -1,3 +1,21 @@
+/*
+   ZAU Single Sign-On
+   Copyright (C) 2021  Daniel A. Hawton <daniel@hawton.org>
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Affero General Public License as published
+   by the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Affero General Public License for more details.
+
+   You should have received a copy of the GNU Affero General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 package v1
 
 import (
@@ -13,6 +31,7 @@ import (
 	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jwt"
+	utils "github.com/vchicago/common/utils"
 	"github.com/vchicago/sso/database/models"
 	dbTypes "github.com/vchicago/types/database"
 )
@@ -95,7 +114,7 @@ func PostToken(c *gin.Context) {
 
 	key, _ := keyset.LookupKeyID(os.Getenv("SSO_CURRENT_KEY"))
 	token := jwt.New()
-	token.Set(jwt.IssuerKey, "auth.kzdv.io")
+	token.Set(jwt.IssuerKey, utils.Getenv("SSO_ISSUERKEY", "auth.chicagoartcc.org"))
 	token.Set(jwt.AudienceKey, login.Client.Name)
 	token.Set(jwt.SubjectKey, fmt.Sprint(login.CID))
 	token.Set(jwt.IssuedAtKey, time.Now())
