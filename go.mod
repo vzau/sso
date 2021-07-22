@@ -21,8 +21,8 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/ugorji/go v1.2.6 // indirect
-	github.com/vzau/common v0.0.0-20210712014016-5713837bd65d
-	github.com/vzau/types v0.0.0-20210717185827-9e5065661c74
+	github.com/vzau/common v0.0.0-20210722011859-2af4235c98bf // indirect
+	github.com/vzau/types v0.0.0-20210722011430-2b3238311a40 // indirect
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	golang.org/x/text v0.3.6 // indirect
