@@ -31,9 +31,9 @@ import (
 	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jwt"
-	utils "github.com/vchicago/common/utils"
-	"github.com/vchicago/sso/database/models"
-	dbTypes "github.com/vchicago/types/database"
+	utils "github.com/vzau/common/utils"
+	"github.com/vzau/sso/database/models"
+	dbTypes "github.com/vzau/types/database"
 )
 
 type TokenRequest struct {

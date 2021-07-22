@@ -20,7 +20,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/vchicago/sso/middleware"
+	"github.com/vzau/sso/middleware"
 )
 
 type Server struct {

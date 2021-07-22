@@ -28,10 +28,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/robfig/cron/v3"
-	"github.com/vchicago/sso/database/models"
-	"github.com/vchicago/sso/database/seed"
-	"github.com/vchicago/sso/utils"
-	dbTypes "github.com/vchicago/types/database"
+	"github.com/vzau/sso/database/models"
+	"github.com/vzau/sso/database/seed"
+	"github.com/vzau/sso/utils"
+	dbTypes "github.com/vzau/types/database"
 )
 
 var log = log4g.Category("main")

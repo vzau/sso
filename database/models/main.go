@@ -23,7 +23,7 @@ import (
 	"time"
 
 	"github.com/dhawton/log4g"
-	dbTypes "github.com/vchicago/types/database"
+	dbTypes "github.com/vzau/types/database"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

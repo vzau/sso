@@ -27,9 +27,9 @@ import (
 	"github.com/dhawton/log4g"
 	"github.com/gin-gonic/gin"
 	gonanoid "github.com/matoous/go-nanoid/v2"
-	"github.com/vchicago/sso/database/models"
-	"github.com/vchicago/sso/utils"
-	dbTypes "github.com/vchicago/types/database"
+	"github.com/vzau/sso/database/models"
+	"github.com/vzau/sso/utils"
+	dbTypes "github.com/vzau/types/database"
 )
 
 type AuthorizeRequest struct {

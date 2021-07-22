@@ -22,8 +22,8 @@ import (
 	"errors"
 
 	"github.com/dhawton/log4g"
-	"github.com/vchicago/sso/database/models"
-	dbTypes "github.com/vchicago/types/database"
+	"github.com/vzau/sso/database/models"
+	dbTypes "github.com/vzau/types/database"
 	"gorm.io/gorm"
 )
 

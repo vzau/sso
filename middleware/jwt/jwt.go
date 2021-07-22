@@ -28,8 +28,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jwt"
-	"github.com/vchicago/sso/database/models"
-	dbTypes "github.com/vchicago/types/database"
+	"github.com/vzau/sso/database/models"
+	dbTypes "github.com/vzau/types/database"
 	"gorm.io/gorm/clause"
 )
 

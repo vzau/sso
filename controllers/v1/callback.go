@@ -33,8 +33,8 @@ import (
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jwt"
 	gonanoid "github.com/matoous/go-nanoid/v2"
-	"github.com/vchicago/sso/database/models"
-	dbTypes "github.com/vchicago/types/database"
+	"github.com/vzau/sso/database/models"
+	dbTypes "github.com/vzau/types/database"
 )
 
 type Result struct {

@@ -22,8 +22,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	v1 "github.com/vchicago/sso/controllers/v1"
-	jwtMiddleware "github.com/vchicago/sso/middleware/jwt"
+	v1 "github.com/vzau/sso/controllers/v1"
+	jwtMiddleware "github.com/vzau/sso/middleware/jwt"
 )
 
 func SetupRoutes(engine *gin.Engine) {
