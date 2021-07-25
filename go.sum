@@ -126,6 +126,8 @@ github.com/vzau/types v0.0.0-20210717185827-9e5065661c74 h1:Uo7vBXKAGzRtG11/s/wA
 github.com/vzau/types v0.0.0-20210717185827-9e5065661c74/go.mod h1:n13UVTFIkREf2gnCH7RL7pUcVbTgfmiCyhUxh3v0arA=
 github.com/vzau/types v0.0.0-20210722011430-2b3238311a40 h1:7IL7jHhmZ9/uwxqGP3rGPATMXHRScLT+hf8zR1tcwyo=
 github.com/vzau/types v0.0.0-20210722011430-2b3238311a40/go.mod h1:HttNL+hY2xVwdXvt90Yt4q1I5PDOXLYlcDvSNnGirjk=
+github.com/vzau/types v1.0.0 h1:9D8rMTJHim562qMXoquAjV/r7erv5Qg7MqGzshsXEYI=
+github.com/vzau/types v1.0.0/go.mod h1:HttNL+hY2xVwdXvt90Yt4q1I5PDOXLYlcDvSNnGirjk=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=

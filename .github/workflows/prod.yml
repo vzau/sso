@@ -15,7 +15,7 @@ jobs:
       - name: Prepare
         id: prep
         run: |
-          DOCKER_IMAGE=vchicago/sso
+          DOCKER_IMAGE=vzau/sso
           VERSION=dev
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
@@ -46,7 +46,7 @@ jobs:
         env:
           KUBE_CONFIG: ${{ secrets.KUBECTL }}
         with:
-          args: set image deployment/sso sso=vchicago/sso:${{ steps.prep.outputs.tags }} -n prod
+          args: set image deployment/sso sso=vzau/sso:${{ steps.prep.outputs.tags }} -n prod
       - name: Verify deployment
         if: ${{ github.event_name != 'push' }}
         uses: actions-hub/kubectl@master
