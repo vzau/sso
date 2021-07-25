@@ -108,11 +108,16 @@ func PostToken(c *gin.Context) {
 	keyset, err := jwk.Parse([]byte(os.Getenv("SSO_JWKS")))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
-		log4g.Category("controller/token").Error("Could not parse JWKs: " + err.Error())
+		log4g.Category("controller/token").Error("Could not parse JWKs: %s", err.Error())
 		return
 	}
 
-	key, _ := keyset.LookupKeyID(os.Getenv("SSO_CURRENT_KEY"))
+	key, ok := keyset.LookupKeyID(os.Getenv("SSO_CURRENT_KEY"))
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		log4g.Category("controllers/token").Error("Could not find current key in JWKs")
+		return
+	}
 	token := jwt.New()
 	token.Set(jwt.IssuerKey, utils.Getenv("SSO_ISSUERKEY", "auth.chicagoartcc.org"))
 	token.Set(jwt.AudienceKey, login.Client.Name)
