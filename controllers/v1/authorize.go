@@ -61,13 +61,13 @@ func GetAuthorize(c *gin.Context) {
 		return
 	}
 
-	if req.ResponseType != "token" {
+	if req.ResponseType != "code" {
 		log4g.Category("controllers/authorize").Error("Invalid response type received from client " + client.ClientId + ", " + req.ResponseType)
 		handleError(c, "Unsupported response type received.")
 		return
 	}
 
-	if req.CodeChallengeMethod != "S256" {
+	if req.CodeChallengeMethod != "" && req.CodeChallengeMethod != "S256" {
 		log4g.Category("controllers/authorize").Error("Invalid code challenge method received from client " + client.ClientId + ", " + req.CodeChallengeMethod)
 		handleError(c, "Unsupported Code Challenge Method defined.")
 		return

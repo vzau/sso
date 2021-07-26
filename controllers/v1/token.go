@@ -22,6 +22,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"os"
 	"time"
@@ -76,7 +77,7 @@ func PostToken(c *gin.Context) {
 
 	defer models.DB.Delete(&login)
 
-	if c.Query("client_id") == "" || c.Query("client_secret") == "" {
+	if treq.ClientId == "" || treq.ClientSecret == "" {
 		// Not in query string, let's grab from Authorization header
 		auth := c.Request.Header.Get("Authorization")
 		if auth == "" {
@@ -98,11 +99,13 @@ func PostToken(c *gin.Context) {
 		return
 	}
 
-	hash := sha256.Sum256([]byte(treq.CodeVerifier))
-	if login.CodeChallenge != base64.RawURLEncoding.EncodeToString(hash[:]) {
-		log4g.Category("controllers/token").Error(fmt.Sprintf("Code Challenge failed"))
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid_grant"})
-		return
+	if login.CodeChallengeMethod == "S256" {
+		hash := sha256.Sum256([]byte(treq.CodeVerifier))
+		if login.CodeChallenge != base64.RawURLEncoding.EncodeToString(hash[:]) {
+			log4g.Category("controllers/token").Error(fmt.Sprintf("Code Challenge failed"))
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid_grant"})
+			return
+		}
 	}
 
 	keyset, err := jwk.Parse([]byte(os.Getenv("SSO_JWKS")))
@@ -112,7 +115,13 @@ func PostToken(c *gin.Context) {
 		return
 	}
 
-	key, ok := keyset.LookupKeyID(os.Getenv("SSO_CURRENT_KEY"))
+	rand.Seed(time.Now().Unix())
+	key, ok := keyset.Get(rand.Intn(keyset.Len()))
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		log4g.Category("controllers/token").Error("Could not find current key in JWKs")
+		return
+	}
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		log4g.Category("controllers/token").Error("Could not find current key in JWKs")
@@ -124,7 +133,7 @@ func PostToken(c *gin.Context) {
 	token.Set(jwt.SubjectKey, fmt.Sprint(login.CID))
 	token.Set(jwt.IssuedAtKey, time.Now())
 	token.Set(jwt.ExpirationKey, time.Now().Add((time.Hour * 24 * 7)).Unix())
-	signed, err := jwt.Sign(token, jwa.EdDSA, key)
+	signed, err := jwt.Sign(token, jwa.SignatureAlgorithm(key.Algorithm()), key)
 	if err != nil {
 		log4g.Category("controllers/token").Error("Failed to create JWT: " + err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid_grant"})

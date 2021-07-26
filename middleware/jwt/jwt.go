@@ -43,7 +43,7 @@ var log = log4g.Category("middleware/jwt")
 func Auth(c *gin.Context) {
 	requireAuth = true
 
-	const BEARER_SCHEMA = "Bearer"
+	const BEARER_SCHEMA = "Bearer "
 	authHeader := c.GetHeader("Authorization")
 	if len(authHeader) < len(BEARER_SCHEMA) {
 		HandleRet(c, http.StatusUnauthorized, "Unauthorized")
@@ -56,7 +56,9 @@ func Auth(c *gin.Context) {
 		HandleRet(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
-	token, err := jwt.Parse([]byte(tokenString), jwt.WithKeySet(keyset), jwt.WithValidate(true))
+	log.Debug("Token '%s'", tokenString)
+	pubkeyset, _ := jwk.PublicSetOf(keyset)
+	token, err := jwt.Parse([]byte(tokenString), jwt.WithKeySet(pubkeyset), jwt.WithValidate(true))
 	if err != nil {
 		log.Warning("Bad token passed: %s // %s", err.Error(), tokenString)
 		HandleRet(c, http.StatusForbidden, "Forbidden")
