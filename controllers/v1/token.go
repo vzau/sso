@@ -76,7 +76,7 @@ func PostToken(c *gin.Context) {
 
 	defer models.DB.Delete(&login)
 
-	if c.Query("client_id") == "" || c.Query("client_secret") == "" {
+	if treq.ClientId == "" || treq.ClientSecret == "" {
 		// Not in query string, let's grab from Authorization header
 		auth := c.Request.Header.Get("Authorization")
 		if auth == "" {
