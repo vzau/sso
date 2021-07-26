@@ -61,7 +61,7 @@ func GetAuthorize(c *gin.Context) {
 		return
 	}
 
-	if req.ResponseType != "token" {
+	if req.ResponseType != "code" {
 		log4g.Category("controllers/authorize").Error("Invalid response type received from client " + client.ClientId + ", " + req.ResponseType)
 		handleError(c, "Unsupported response type received.")
 		return
