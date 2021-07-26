@@ -126,7 +126,7 @@ func PostToken(c *gin.Context) {
 	token.Set(jwt.SubjectKey, fmt.Sprint(login.CID))
 	token.Set(jwt.IssuedAtKey, time.Now())
 	token.Set(jwt.ExpirationKey, time.Now().Add((time.Hour * 24 * 7)).Unix())
-	signed, err := jwt.Sign(token, jwa.EdDSA, key)
+	signed, err := jwt.Sign(token, jwa.SignatureAlgorithm(key.Algorithm()), key)
 	if err != nil {
 		log4g.Category("controllers/token").Error("Failed to create JWT: " + err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid_grant"})
