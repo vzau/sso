@@ -27,6 +27,7 @@ import (
 	"github.com/dhawton/log4g"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/robfig/cron/v3"
 	"github.com/vzau/sso/database/models"
 	"github.com/vzau/sso/database/seed"
@@ -71,6 +72,9 @@ func main() {
 
 	log.Info("Configuring Gin Server")
 	server := NewServer(appenv)
+
+	keyset, _ := jwk.Parse([]byte(os.Getenv("SSO_JWKS")))
+	log.Debug("Loaded %d keys in keyset", keyset.Len())
 
 	log.Info("Configuring scheduled jobs")
 	jobs := cron.New()

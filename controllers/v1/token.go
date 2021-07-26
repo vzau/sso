@@ -22,6 +22,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"os"
 	"time"
@@ -114,7 +115,13 @@ func PostToken(c *gin.Context) {
 		return
 	}
 
-	key, ok := keyset.LookupKeyID(os.Getenv("SSO_CURRENT_KEY"))
+	rand.Seed(time.Now().Unix())
+	key, ok := keyset.Get(rand.Intn(keyset.Len()))
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		log4g.Category("controllers/token").Error("Could not find current key in JWKs")
+		return
+	}
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		log4g.Category("controllers/token").Error("Could not find current key in JWKs")
