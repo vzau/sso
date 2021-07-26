@@ -98,11 +98,13 @@ func PostToken(c *gin.Context) {
 		return
 	}
 
-	hash := sha256.Sum256([]byte(treq.CodeVerifier))
-	if login.CodeChallenge != base64.RawURLEncoding.EncodeToString(hash[:]) {
-		log4g.Category("controllers/token").Error(fmt.Sprintf("Code Challenge failed"))
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid_grant"})
-		return
+	if login.CodeChallengeMethod == "S256" {
+		hash := sha256.Sum256([]byte(treq.CodeVerifier))
+		if login.CodeChallenge != base64.RawURLEncoding.EncodeToString(hash[:]) {
+			log4g.Category("controllers/token").Error(fmt.Sprintf("Code Challenge failed"))
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid_grant"})
+			return
+		}
 	}
 
 	keyset, err := jwk.Parse([]byte(os.Getenv("SSO_JWKS")))
