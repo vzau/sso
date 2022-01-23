@@ -43,7 +43,6 @@ func GetRefresh(c *gin.Context) {
 			return
 		}
 		keyset, _ := jwk.Parse([]byte(os.Getenv("SSO_JWKS")))
-
 		t, err := jwt.Parse(parts[1], jwt.WithKeySet(keyset))
 		if err != nil {
 			c.JSON(http.StatusForbidden, gin.H{"message": "Forbidden"})

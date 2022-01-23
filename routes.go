@@ -46,4 +46,6 @@ func SetupRoutes(engine *gin.Engine) {
 	{
 		v1Router.GET("/info", jwtMiddleware.Auth, v1.GetInfo)
 	}
+
+	engine.GET("/.well-known/openid-configuration", v1.GetOIDCConfig)
 }
