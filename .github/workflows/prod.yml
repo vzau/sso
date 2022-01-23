@@ -47,9 +47,9 @@ jobs:
         env:
           KUBE_CONFIG: ${{ secrets.KUBECTL }}
         with:
-          args: set image deployment/auth auth=vzau/sso:${{ steps.prep.outputs.version }} -n prod
+          args: set image deployment/auth auth=vzau/sso:${{ steps.prep.outputs.version }} -n zau-prod
       - name: Verify deployment
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions-hub/kubectl@master
         with:
-          args: rollout status deployment/auth -n prod
+          args: rollout status deployment/auth -n zau-prod
